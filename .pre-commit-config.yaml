@@ -20,3 +20,11 @@ repos:
       entry: bash -c "./manage.py makemigrations --check --dry-run"
       types: ["python"]
       pass_filenames: false
+-   repo: local
+    hooks:
+    - id: generate-requirements
+      language: system
+      name: Generate new requirements.txt.
+      entry: bash -c "make generate-requirements"
+      types: ["python"]
+      pass_filenames: false

@@ -1,3 +1,7 @@
+SHELL := /bin/bash
+PWD := $(shell pwd)
+
+
 .PHONY: init
 init:
 	@poetry shell
@@ -6,6 +10,7 @@ init:
 setup:
 	@cp -Rf ./contrib/env-sample .env
 	@poetry install
+	@mkdir -p $(PWD)/static
 
 .PHONY: serve
 serve:
@@ -30,3 +35,7 @@ docker-destroy:
 	@echo "Destroying containers and volumes..."
 	@docker-compose rm -vsf studybud studybud-db
 	@docker volume rm studybud_postgres_data
+
+.PHONY: generate-requirements
+generate-requirements:
+	@poetry export -f requirements.txt --output requirements.txt
