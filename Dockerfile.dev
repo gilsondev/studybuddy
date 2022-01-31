@@ -1,0 +1,36 @@
+FROM python:3.8.6-alpine
+
+# set work directory
+WORKDIR /usr/src/app
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PIP_NO_CACHE_DIR=off
+ENV PIP_DISABLE_PIP_VERSION_CHECK=on
+ENV PIP_DEFAULT_TIMEOUT=100
+ENV POETRY_VERSION=1.1.12
+ENV POETRY_HOME="/opt/poetry"
+ENV POETRY_VIRTUALENVS_IN_PROJECT=false
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV POETRY_NO_INTERACTION=1
+ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
+
+# install psycopg2 dependencies
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev libffi-dev openssl-dev curl rust cargo make
+
+# update pip
+RUN pip install --upgrade pip
+
+# install poetry
+RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+
+# prepare environment
+COPY pyproject.toml poetry.lock ./
+RUN poetry install
+
+COPY . /usr/src/app
+RUN chmod +x /usr/src/app/contrib/entrypoint.sh
+
+EXPOSE 8000
+ENTRYPOINT ["/usr/src/app/contrib/entrypoint.sh"]

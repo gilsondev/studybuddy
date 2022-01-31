@@ -1,0 +1,5 @@
+site_name: 'Studybuddy'
+theme:
+  name: 'material'
+nav:
+    - Index: docs/index.md
