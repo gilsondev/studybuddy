@@ -5,7 +5,7 @@
     <form action="{% url 'create-room' %}" method="POST">
       {% csrf_token %}
       {{ form.as_p }}
-      <input type="submit" value="">
+      <input type="submit" value="Save room">
     </form>
   </div>
 {% endblock content %}
