@@ -2,14 +2,9 @@
 
 {% block content %}
 <div>
-  <form action="" method="POST">
+  <form action="{% url 'login' %}" method="POST">
     {% csrf_token %}
-
-    <label for="username">Username:</label>
-    <input type="text" name="username" id="username" placeholder="Enter username" />
-
-    <label for="password">Password:</label>
-    <input type="password" name="password" id="password" placeholder="Enter password" />
+    {{ form.as_p }}
 
     <input type="submit" value="Login" />
 

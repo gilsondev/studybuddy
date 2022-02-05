@@ -1,33 +1,32 @@
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.db.models import Q
-from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect, render
 
 from base.forms import RoomForm
 from base.models import Room, Topic
 
 
 def login_page(request):
-    username = request.POST.get("username")
-    password = request.POST.get("password")
+    form = AuthenticationForm()
 
-    has_user = User.objects.filter(username=username).exists()
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
 
-    if has_user:
-        user = authenticate(request, username, password)
+        if form.is_valid():
+            user = form.get_user()
 
-        if user is not None:
-            login(request, user)
-            return redirect("home")
+            if user is not None:
+                login(request, user)
+                return redirect("home")
+            else:
+                messages.error(request, "Password or user is not correct")
         else:
-            messages.error(request, "Password or user is not correct")
-    else:
-        messages.error(request, "User does not exist")
+            messages.error(request, "Username or password is invalid")
 
-    return render(request, "base/login.html", {})
+    return render(request, "base/login.html", {"form": form})
 
 
 def register_page(request):
@@ -35,7 +34,7 @@ def register_page(request):
 
     if request.method == "POST":
         form = UserCreationForm(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
@@ -76,7 +75,7 @@ def create_room(request):
     form = RoomForm()
     if request.method == "POST":
         form = RoomForm(request.POST)
-        if form.is_valid:
+        if form.is_valid():
             form.save()
             return redirect("home")
 
@@ -95,7 +94,7 @@ def update_room(request, pk):
 
     if request.method == "POST":
         form = RoomForm(request.POST, instance=room)
-        if form.is_valid:
+        if form.is_valid():
             form.save()
             return redirect("home")
 

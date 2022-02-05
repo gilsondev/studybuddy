@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils.text import Truncator
 
 
@@ -8,6 +8,7 @@ class Topic(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
 
 class Room(models.Model):
     host = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -18,7 +19,7 @@ class Room(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-updated', '-created']
+        ordering = ["-updated", "-created"]
 
     def __str__(self) -> str:
         return self.name
